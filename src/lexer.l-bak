@@ -1,0 +1,108 @@
+%option noyywrap
+%option nounput
+%option noinput
+%top{
+    #include <stdarg.h>
+    #include "common.h"
+    #include "parser.h"
+}
+%{
+    extern dump_type_t dump_type;
+
+    inline void dump_tokens(const char* format, ...){
+        va_list args;
+        va_start(args, format);
+        if (dump_type == TOKENS)
+            vfprintf(yyout, format, args);
+        va_end(args);
+    }
+
+    /* TODO: 初始化词法分析器的其他全局变量或状态信息 */
+%}
+
+/* definitions section */
+DECIMIAL ([1-9][0-9]*|0)
+ID [[:alpha:]_][[:alpha:][:digit:]_]*
+EOL (\r\n|\n|\r)
+WHITE [\t ]
+/* TODO: 定义其他正则表达式或宏，用于匹配更多的词法单元 */
+
+%%
+    /* rules section */
+"int" {
+    dump_tokens("INT\t%s\n", yytext);
+    return INT;
+}
+
+"if" {
+    dump_tokens("IF\t%s\n", yytext);
+    return IF;
+}
+
+"else" {
+    dump_tokens("ELSE\t%s\n", yytext);
+    return ELSE;
+}
+
+"return" {
+    dump_tokens("RETURN\t%s\n", yytext);
+    return RETURN;
+}
+
+"&&" {
+    dump_tokens("AND\t%s\n", yytext);
+    return AND;
+}
+
+"=" {
+    dump_tokens("ASSIGN\t%s\n", yytext);
+    return ASSIGN;
+}
+
+"<" {
+    dump_tokens("LESS\t%s\n", yytext);
+    return LESS;
+}
+
+"+" {
+    dump_tokens("ADD\t%s\n", yytext);
+    return ADD;
+}
+
+";" {
+    dump_tokens("SEMICOLON\t%s\n", yytext);
+    return SEMICOLON;
+}
+
+"(" {
+    /* TODO: 处理左圆括号的词法单元 */
+}
+
+")" {
+    /* TODO: 处理右圆括号的词法单元 */
+}
+
+"{" {
+    /* TODO: 处理左花括号的词法单元 */
+}
+
+"}" {
+    /* TODO: 处理右花括号的词法单元 */
+}
+
+{DECIMIAL} {
+    /* TODO: 处理十进制数字的词法单元 */
+}
+
+{ID} {
+    /* TODO: 处理标识符的词法单元 */
+}
+
+{EOL} yylineno++;
+
+{WHITE}
+
+/* TODO: 处理其他可能的词法单元，例如注释、运算符等 */
+
+%%
+
