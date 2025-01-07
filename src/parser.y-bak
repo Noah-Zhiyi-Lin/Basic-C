@@ -1,0 +1,58 @@
+%code top{
+    #include <iostream>
+    // #include <assert.h>
+    #include "parser.h"
+    #include "SymbolTable.h" // 导入符号表类
+    // #include "Type.h" // 导入类型类
+    // #include "Ast.h" // 导入抽象语法树的节点类
+    // extern Ast ast; // 声明抽象语法树
+    int yylex();
+    int yyerror( char const * );
+}
+
+%code requires {
+    //#include "Ast.h"
+    //#include "SymbolTable.h"
+    //#include "Type.h"
+}
+
+%union {
+    int itype;
+    char* strtype;
+    //StmtNode* stmttype;
+    //ExprNode* exprtype;
+    //Type* type;
+}
+
+%start Program
+// 定义终结符
+%token <strtype> ID 
+%token <itype> INTEGER
+%token IF ELSE
+%token INT VOID
+%token LPAREN RPAREN LBRACE RBRACE SEMICOLON
+%token ADD SUB MULTIPLY DIVIDE MODULO
+%token OR AND NOT LESS GREATER LESSEQUAL GREATEREQUAL NOTEQUAL  ASSIGN
+%token COMMA DOT
+%token PLUSPLUS MINUSMINUS
+%token RETURN
+
+%%
+Program
+    /* 程序的语法规则：
+     * 文法：
+     * Program -> Stmts
+     * 语义动作：
+     * - ast.setRoot($1)：将语句序列节点设为AST根节点
+     * - $1：访问第一个产生式符号Stmts生成的节点
+     * 原因：建立程序的顶层结构，初始化AST
+     */
+    : INT
+    ;
+%%
+
+int yyerror(char const* message)
+{
+    std::cerr<<message<<std::endl;
+    return -1;
+}
